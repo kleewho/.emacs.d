@@ -10,6 +10,7 @@
 
 ;; Set other not related to packages stuff
 (load-theme `wombat)
+(set-face-font 'default "-unknown-Inconsolata-normal-normal-normal-*-13-*-*-*-m-0-iso10646-1")
 (mouse-wheel-mode 1)
 (setq scroll-step 1)
 (setq transient-mark-mode 1)
@@ -63,6 +64,10 @@
   `(eval-after-load ,package-name
      '(defadvice ,mode (after rename-modeline activate)
         (setq mode-name ,new-name))))
+
+(defmacro when-windows (&rest body)
+  `(when (equal system-type 'windows-nt)
+     ,@body))
 
 ;;;; emacs lisp
 (defun imenu-elisp-sections ()
@@ -159,7 +164,7 @@
 (after company-autoloads
   (add-hook 'init-hook 'global-company-mode))
 
-;;;; dont show these modes in modeline
+;;;; diminish - dont show these modes in modeline
 (after diminish-autoloads
   (after paredit (diminish 'paredit-mode))
   (after company (diminish 'company-mode))
