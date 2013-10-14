@@ -43,14 +43,14 @@
   (interactive)
   (package-refresh-contents)
   (mapc #'(lambda (package)
-	    (unless (package-installed-p package)
-	      (package-install package)))
+            (unless (package-installed-p package)
+              (package-install package)))
         '(browse-kill-ring
           ido-ubiquitous
           magit
           smex
           undo-tree
-	  ace-jump-mode)))
+          ace-jump-mode)))
 
 
 ;;;; macros
@@ -127,15 +127,16 @@
   (flx-ido-mode t))
 
 ;;;; smex
-(after smex-autoloads (smex-initialize))
+(after smex-autoloads
+  (smex-initialize)
+  (after smex
+    (global-set-key (kbd "M-x") 'smex)
+    (global-set-key (kbd "M-X") 'smex-major-mode-commands)
+    (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)))
 
-(after smex
-  (global-set-key (kbd "M-x") 'smex)
-  (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-  (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command))
 
 ;;;; ace-jump-mode
-(define-key global-map (kbd "C-;") 'ace-jump-mode) 
+(define-key global-map (kbd "C-;") 'ace-jump-mode)
 
 ;;;; rainbow-delimiters
 (after rainbow-delimiters-autoloads
@@ -149,16 +150,7 @@
 
 ;;;; paredit
 (after paredit-autoloads
-
-  ;; Enable `paredit-mode' in the minibuffer, during `eval-expression'.
-  (defun conditionally-enable-paredit-mode ()
-    (if (eq this-command 'eval-expression)
-        (paredit-mode 1)))
-
-  (add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode)
-
-  (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
-  (add-hook 'clojure-mode-hook 'paredit-mode))
+  (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
 
 ;;;; company-mode
 (after company-autoloads
@@ -184,11 +176,15 @@
 (after flycheck-autoloads
   (add-hook 'after-init-hook #'global-flycheck-mode))
 
-
-
 ;;;; browse-kill-ring
 (after browse-kill-ring-autoloads
   (global-set-key (kbd "C-x C-y") 'browse-kill-ring))
+
+;;;; fill-column-indicator
+(after fill-column-indicator-autoloads
+  (setq fci-rule-column 80)
+  (setq fci-rule-color "gray")
+  (add-hook 'after-change-major-mode-hook 'fci-mode))
 
 ;;; init.el ends here
 
