@@ -186,5 +186,23 @@
   (setq fci-rule-color "gray")
   (add-hook 'after-change-major-mode-hook 'fci-mode))
 
+;;;; csharp
+(defun lk-csharp-mode-fn ()
+  (after omnisharp-autoloads
+    (omnisharp-start-flycheck)))
+
+(after csharp-mode-autoloads
+  (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+  (setq auto-mode-alist
+     (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
+  (add-hook 'csharp-mode-hook 'lk-csharp-mode-fn t))
+
+;;;; omnisharp
+(after omnisharp-autoloads
+  (after csharp-mode-autoloads
+    (add-hook 'csharp-mode-hook 'omnisharp-mode))
+  (after company-autoloads
+    '(add-to-list 'company-backends 'company-omnisharp)))
+
 ;;; init.el ends here
 
