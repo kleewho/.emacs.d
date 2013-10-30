@@ -1,4 +1,4 @@
-;;; init.el --- Łukasz Klich's init file
+;;; init.el --- Lukasz Klich's init file
 ;;; Commentary:
 ;;; Code:
 ;; Disable this fancy graphics shit
@@ -10,7 +10,10 @@
 
 ;; Set other not related to packages stuff
 (load-theme `wombat)
-(set-face-font 'default "-unknown-Inconsolata-normal-normal-normal-*-13-*-*-*-m-0-iso10646-1")
+;;(set-face-font 'default "-unknown-Inconsolata-normal-normal-normal-*-13-*-*-*-m-0-iso10646-1")
+;;(set-face-font 'default "Ubuntu Mono")
+(setq-default indent-tabs-mode nil)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 (mouse-wheel-mode 1)
 (setq scroll-step 1)
 (setq transient-mark-mode 1)
@@ -23,11 +26,9 @@
 (winner-mode t)
 (global-subword-mode t)
 (delete-selection-mode t)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(prefer-coding-system 'utf-8)
+
 (which-function-mode t)
+
 
 ;;;; package.el
 (require 'package)
@@ -62,6 +63,7 @@
 
 (defmacro rename-modeline (package-name mode new-name)
   `(eval-after-load ,package-name
+
      '(defadvice ,mode (after rename-modeline activate)
         (setq mode-name ,new-name))))
 
@@ -76,6 +78,14 @@
 
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
+
+;;;;
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+(when-windows
+ (prefer-coding-system 'cp1252-dos))
 
 ;;;; global set keys
 (global-set-key (kbd "C-x C-b") 'ibuffer)
@@ -174,7 +184,30 @@
 
 ;;;; flycheck
 (after flycheck-autoloads
-  (add-hook 'after-init-hook #'global-flycheck-mode))
+  (require 'flycheck)
+  (add-hook 'after-init-hook #'global-flycheck-mode)
+  (when (file-exists-p "~/.emacs.d/packages/jslint-reporter/jslint-reporter.bat")
+    (flycheck-define-checker javascript-jslint-reporter
+      "A JavaScript syntax and style checker based on JSLint Reporter.
+       See URL `https://github.com/FND/jslint-reporter'."
+      :command ("~/.emacs.d/packages/jslint-reporter/jslint-reporter.bat" source)
+      :error-patterns
+      ((error line-start (1+ nonl) ":" line ":" column ":" (message) line-end))
+      :modes (js-mode js2-mode js3-mode))
+    (add-hook 'js-mode-hook (lambda ()
+                              (flycheck-select-checker 'javascript-jslint-reporter)
+                              (flycheck-mode))))
+  (when (file-exists-p "~/.emacs.d/jshint-reporter.bat")
+    (flycheck-define-checker my-jshint
+      "A JavaScript syntax and style checker using jshint.
+
+       See URL `http://www.jshint.com'."
+      :command ("~/.emacs.d/jshint-reporter.bat" "--checkstyle-reporter"
+                (config-file "--config" flycheck-jshintrc)
+                source)
+      :error-parser flycheck-parse-checkstyle
+      :modes (js-mode js2-mode js3-mode))))
+
 
 ;;;; browse-kill-ring
 (after browse-kill-ring-autoloads
@@ -204,5 +237,11 @@
   (after company-autoloads
     '(add-to-list 'company-backends 'company-omnisharp)))
 
-;;; init.el ends here
+;;;; whitespace-mode
+(require 'whitespace)
+(setq whitespace-style '(face empty tabs trailing tab-mark space-mark))
+(global-whitespace-mode t)
 
+
+
+;;; init.el ends here
