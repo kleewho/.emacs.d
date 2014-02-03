@@ -51,7 +51,25 @@
           magit
           smex
           undo-tree
-          ace-jump-mode)))
+          ace-jump-mode
+          ido-ubiquitous
+          ido-vertical-mode
+          flx-ido
+          smex
+          smex
+          rainbow-delimiters
+          undo-tree
+          paredit
+          company
+          diminish
+          paredit
+          company
+          undo-tree
+          smartparens
+          js2-mode
+          flycheck
+          browse-kill-ring
+          fill-column-indicator)))
 
 
 ;;;; macros
