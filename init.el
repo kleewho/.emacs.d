@@ -7,6 +7,7 @@
 (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (setq inhibit-startup-screen t)
 
+(set-default 'tramp-default-proxies-alist (quote ((".*" "\\`root\\'" "/ssh:%h:"))))
 
 ;; Set other not related to packages stuff
 (load-theme `wombat)
