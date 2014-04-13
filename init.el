@@ -179,7 +179,8 @@
 
 ;;;; paredit
 (after paredit-autoloads
-  (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
+  (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
+  (add-hook 'clojure-mode-hook 'paredit-mode))
 
 ;;;; company-mode
 (after company-autoloads
@@ -232,16 +233,11 @@
 (after browse-kill-ring-autoloads
   (global-set-key (kbd "C-x C-y") 'browse-kill-ring))
 
-;;;; fill-column-indicator
-(after fill-column-indicator-autoloads
-  (setq fci-rule-column 80)
-  (setq fci-rule-color "gray")
-  (add-hook 'after-change-major-mode-hook 'fci-mode))
-
 ;;;; csharp
 (defun lk-csharp-mode-fn ()
   (after omnisharp-autoloads
-    (omnisharp-start-flycheck)))
+    (omnisharp-start-flycheck))
+  (osharpsm-start-server))
 
 (after csharp-mode-autoloads
   (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
@@ -261,6 +257,49 @@
 (setq whitespace-style '(face empty tabs trailing tab-mark space-mark))
 (global-whitespace-mode t)
 
+;;;; markdown
+(after markdown-mode-autoloads
+  (autoload 'markdown-mode "markdown-mode"
+    "Major mode for editing Markdown files" t)
+  (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode)))
 
+
+;;;; eclim
+(after emacs-eclim-autoloads
+  (require 'eclim)
+  (global-eclim-mode)
+  (require 'eclimd)
+  (custom-set-variables
+   '(eclim-eclipse-dirs "~/opt/eclipse"))
+  (setq help-at-pt-display-when-idle t)
+  (setq help-at-pt-timer-delay 0.1)
+  (help-at-pt-set-timer)
+  (require 'company)
+  (require 'company-emacs-eclim)
+  (company-emacs-eclim-setup)
+  (global-company-mode t)
+  (eval-after-load 'eclim-mode-major-mode
+    (define-key eclim-mode-map (kbd "M-<f7>") 'eclim-java-find-references)))
+
+;;;; auctex
+(after auctex-autoloads
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq TeX-PDF-mode t))
+
+;;;; cider
+(after cider-autoloads
+  (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+  (setq nrepl-hide-special-buffers t)
+  (add-hook 'cider-repl-mode-hook 'paredit-mode)
+  (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode))
+
+;;;; yasnippets
+(after yasnippet-autoloads
+  (require 'yasnippet)
+  (yas-global-mode 1))
+
+(after projectile-autoloads
+  (projectile-global-mode))
 
 ;;; init.el ends here
