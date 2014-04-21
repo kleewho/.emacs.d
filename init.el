@@ -27,8 +27,14 @@
 (winner-mode t)
 (global-subword-mode t)
 (delete-selection-mode t)
-
 (which-function-mode t)
+(server-start)
+;; Prevent the cursor from blinking
+(blink-cursor-mode 0)
+;; Don't use messages that you don't read
+(setq initial-scratch-message "")
+(setq inhibit-startup-message t)
+
 
 
 ;;;; package.el
@@ -36,7 +42,8 @@
 (setq package-user-dir "~/.emacs.d/elpa")
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("marmalade" .
+                                 "http://marmalade-repo.org/packages/"))
 (package-initialize)
 
 
@@ -56,8 +63,6 @@
           ido-ubiquitous
           ido-vertical-mode
           flx-ido
-          smex
-          smex
           rainbow-delimiters
           undo-tree
           paredit
@@ -72,13 +77,12 @@
           browse-kill-ring
           fill-column-indicator)))
 
-
 ;;;; macros
 (defmacro after (mode &rest body)
   "`eval-after-load' MODE evaluate BODY."
   (declare (indent defun))
   `(eval-after-load ',mode
-     '(progn ,@body)))
+     (progn ,@body)))
 
 (defmacro rename-modeline (package-name mode new-name)
   `(eval-after-load ,package-name
@@ -158,11 +162,9 @@
 ;;;; smex
 (after smex-autoloads
   (smex-initialize)
-  (after smex
-    (global-set-key (kbd "M-x") 'smex)
-    (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-    (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)))
-
+  (global-set-key (kbd "M-x") 'smex)
+  (global-set-key (kbd "M-X") 'smex-major-mode-commands)
+  (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command))
 
 ;;;; ace-jump-mode
 (define-key global-map (kbd "C-;") 'ace-jump-mode)
@@ -186,19 +188,19 @@
 (after company-autoloads
   (add-hook 'init-hook 'global-company-mode))
 
-;;;; diminish - dont show these modes in modeline
-(after diminish-autoloads
-  (after paredit (diminish 'paredit-mode))
-  (after company (diminish 'company-mode))
-  (after undo-tree (diminish 'undo-tree-mode)))
+;; ;;;; diminish - dont show these modes in modeline
+;; (after diminish-autoloads
+;;   (after paredit (diminish 'paredit-mode))
+;;   (after company (diminish 'company-mode))
+;;   (after undo-tree (diminish 'undo-tree-mode)))
 
 ;;;; smartparens
 (after smartparens-autoloads
   (require 'smartparens-config))
 
-;;;; js2-mode
-(after js2-mode-autoloads
-  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode)))
+;; ;;;; js2-mode
+;; (after js2-mode-autoloads
+;;   (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode)))
 
 (rename-modeline "js2-mode" js2-mode "JS2")
 
@@ -233,25 +235,6 @@
 (after browse-kill-ring-autoloads
   (global-set-key (kbd "C-x C-y") 'browse-kill-ring))
 
-;;;; csharp
-(defun lk-csharp-mode-fn ()
-  (after omnisharp-autoloads
-    (omnisharp-start-flycheck))
-  (osharpsm-start-server))
-
-(after csharp-mode-autoloads
-  (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
-  (setq auto-mode-alist
-     (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
-  (add-hook 'csharp-mode-hook 'lk-csharp-mode-fn t))
-
-;;;; omnisharp
-(after omnisharp-autoloads
-  (after csharp-mode-autoloads
-    (add-hook 'csharp-mode-hook 'omnisharp-mode))
-  (after company-autoloads
-    '(add-to-list 'company-backends 'company-omnisharp)))
-
 ;;;; whitespace-mode
 (require 'whitespace)
 (setq whitespace-style '(face empty tabs trailing tab-mark space-mark))
@@ -278,7 +261,7 @@
   (require 'company-emacs-eclim)
   (company-emacs-eclim-setup)
   (global-company-mode t)
-  (eval-after-load 'eclim-mode-major-mode
+  (after eclim-mode-major-mode
     (define-key eclim-mode-map (kbd "M-<f7>") 'eclim-java-find-references)))
 
 ;;;; auctex
@@ -301,5 +284,18 @@
 
 (after projectile-autoloads
   (projectile-global-mode))
+
+(after dash-autoloads
+  (dash-enable-font-lock))
+
+(after key-chord-autoloads
+  (require 'key-chord)
+  (key-chord-define-global "jj" 'ace-jump-word-mode)
+  (key-chord-define-global "jl" 'ace-jump-line-mode)
+  (key-chord-define-global "jk" 'ace-jump-char-mode)
+  (key-chord-define-global "uu" 'undo-tree-visualize)
+  (key-chord-define-global "xx" 'execute-extended-command)
+  (key-chord-define-global "yy" 'browse-kill-ring)
+  (key-chord-mode 1))
 
 ;;; init.el ends here
