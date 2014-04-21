@@ -111,7 +111,6 @@
  (prefer-coding-system 'cp1252-dos))
 
 ;;;; global set keys
-(global-set-key (kbd "C-x C-b") 'ibuffer)
 (global-set-key (kbd "RET") 'newline-and-indent)
 
 ;;;; saveplace
@@ -122,49 +121,6 @@
 ;;;; uniquify
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'forward)
-
-;;;; ido
-(require 'ido)
-(ido-mode t)
-(ido-everywhere t)
-(setq ido-enable-flex-matching t)
-(setq ido-auto-merge-work-directories-length nil)
-(setq ido-create-new-buffer 'always)
-(setq ido-everywhere t)
-(setq ido-max-prospects 10)
-(setq ido-read-file-name-non-ido nil)
-(setq ido-use-filename-at-point nil)
-(setq ido-use-virtual-buffers t)
-
-(add-hook 'ido-setup-hook
- (lambda ()
-   ;; Go straight home
-   (define-key ido-file-completion-map
-     (kbd "~")
-     (lambda ()
-       (interactive)
-       (if (looking-back "/")
-           (insert "~/")
-         (call-interactively 'self-insert-command))))))
-
-;;;; ido-ubiquitous
-(after ido-ubiquitous-autoloads
-  (ido-ubiquitous-mode 1))
-
-;;;; ido-vertical-mode
-(after ido-vertical-mode-autoloads
-  (ido-vertical-mode t))
-
-;;;; flx
-(after flx-ido-autoloads
-  (flx-ido-mode t))
-
-;;;; smex
-(after smex-autoloads
-  (smex-initialize)
-  (global-set-key (kbd "M-x") 'smex)
-  (global-set-key (kbd "M-X") 'smex-major-mode-commands)
-  (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command))
 
 ;;;; ace-jump-mode
 (define-key global-map (kbd "C-;") 'ace-jump-mode)
@@ -297,5 +253,11 @@
   (key-chord-define-global "xx" 'execute-extended-command)
   (key-chord-define-global "yy" 'browse-kill-ring)
   (key-chord-mode 1))
+
+(after helm-autoloads
+  (helm-mode)
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  (global-set-key (kbd "C-x C-b") 'helm-buffers-list))
 
 ;;; init.el ends here
