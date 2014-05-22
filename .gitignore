@@ -5,3 +5,13 @@ auto-save-list
 history
 saved-places
 tramp
+bookmarks
+ede-projects.el
+maven-pom-mode/
+projectile-bookmarks.eld
+projectile.cache
+semanticdb/
+session*
+srecode-map.el
+url/
+workbench.xmi
